@@ -1,0 +1,24 @@
+{
+  "dependencies": {
+    "@types/three": "^0.131.0"
+  },
+  "name": "threejs-journey",
+  "description": "Following this course: https://threejs-journey.xyz/",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maronin/ThreeJS-Journey.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/maronin/ThreeJS-Journey/issues"
+  },
+  "homepage": "https://github.com/maronin/ThreeJS-Journey#readme"
+}
