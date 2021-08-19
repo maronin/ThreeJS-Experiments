@@ -139,55 +139,28 @@ const axesHelper = new THREE.AxesHelper()
 const clock = new THREE.Clock()
 let particles = []
 let time = 0
-    // const point = new THREE.Vector3()
-    // const particle = new Particle(point, pointProperties.particlesPerPoint)
-    // for (let j = 0; j < particle.points.length; j++) {
-    //     scene.add(particle.points[j])
-    // }
 const tick = () => {
     const elapsedTime = clock.getElapsedTime()
 
-    const perSecond = 144
-    const seconds = Math.round(elapsedTime * perSecond) / perSecond;
+    // Update controls
+    controls.update();
 
-    if (time < seconds) {
-        time = seconds
+    const p = makePoint()
 
-        if (time > 1) {
+    const particle = new Particle(p, pointProperties.particlesPerPoint)
 
-            // Update controls
-            controls.update();
+    particles.push(particle)
 
-            const p = makePoint()
-
-            const particle = new Particle(p, pointProperties.particlesPerPoint)
-
-            particles.push(particle)
-
-
-            for (let j = 0; j < particle.points.length; j++) {
-                scene.add(particle.points[j])
-            }
-
-            for (let i = 0; i < particles.length; i++) {
-                particles[i].update(elapsedTime, scene);
-                if (particles[i].lifeTime > particles[i].endOfLife) {
-                    particles.splice(i, 1);
-                }
-            }
-        }
-
+    for (let j = 0; j < particle.points.length; j++) {
+        scene.add(particle.points[j])
     }
 
-    /*
-                if (time < seconds) {
-                    time = seconds
-                        // console.log(time);
-
-
-
-    */
-
+    for (let i = 0; i < particles.length; i++) {
+        particles[i].update(elapsedTime, scene);
+        if (particles[i].lifeTime > particles[i].endOfLife) {
+            particles.splice(i, 1);
+        }
+    }
 
     // Render
     renderer.render(scene, camera)
