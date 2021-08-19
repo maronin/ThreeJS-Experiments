@@ -1,6 +1,7 @@
 import * as THREE from 'three'
+import { Vector2 } from 'three';
 
-const geometry = new THREE.PlaneBufferGeometry(0.5, 0.5);
+
 
 const material0 = new THREE.MeshBasicMaterial({
     color: 'green',
@@ -51,50 +52,57 @@ const material6 = new THREE.MeshBasicMaterial({
 
 });
 
+const materials = [
+    new THREE.PointsMaterial({ color: 0xffffff }),
+    new THREE.PointsMaterial({ color: 0x66FF99, transparent: true, opacity: 0.8 }),
+    new THREE.PointsMaterial({ color: 0x00cc44, transparent: true, opacity: 0.6 }),
+    new THREE.PointsMaterial({ color: 0x00cc44, transparent: true, opacity: 0.5 }),
+    new THREE.PointsMaterial({ color: 0x00cc44, transparent: true, opacity: 0.4 }),
+    new THREE.PointsMaterial({ color: 0x00cc44, transparent: true, opacity: 0.3 }),
+    new THREE.PointsMaterial({ color: 0x00cc44, transparent: true, opacity: 0.2 }),
+    new THREE.PointsMaterial({ color: 0x00cc44, transparent: true, opacity: 0.2 }),
+    new THREE.PointsMaterial({ color: 0x00cc44, transparent: true, opacity: 0.1 }),
+    new THREE.PointsMaterial({ color: 0x00cc44, transparent: true, opacity: 0.1 }),
+]
 
-
+let material = new THREE.PointsMaterial()
 export default class Particle {
-    constructor(p) {
-        this.particlesPerSecond = 6
+    constructor(p, ppp) {
+        this.particlesPerSecond = ppp
         this.particleLifeTime = 1
         this.position = new THREE.Vector3(p.x, p.y, p.z)
         this.delay = 0.05
         this.clock = new THREE.Clock()
         this.lifeTime = 0
-        this.endOfLife = 4
-        this.meshes = []
-        let material = new THREE.PointsMaterial()
+        this.endOfLife = 3
+        this.points = []
+        const geometry = new THREE.BufferGeometry();
 
-        for (let i = this.particlesPerSecond; i > 0; i--) {
-            if (i == 0) material = material0
-            if (i == 1) material = material1
-            if (i == 2) material = material2
-            if (i == 3) material = material3
-            if (i == 4) material = material4
-            if (i == 5) material = material5
-            if (i == 6) material = material6
+        for (let i = 0; this.particlesPerSecond > i; i++) {
+            const vertices = []
+            vertices.push(this.position.x, this.position.y, this.position.z)
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
 
-            const mesh = new THREE.Mesh(geometry, material)
-            mesh.position.copy(this.position)
-            this.meshes.push(mesh)
+            const point = new THREE.Points(geometry, materials[i])
+            this.points.push(point)
         }
     }
 
     update(elapsedTime, scene) {
         this.lifeTime = this.clock.getElapsedTime()
 
-        for (let i = 0; i < this.meshes.length; i++) {
+        for (let i = 0; i < this.points.length; i++) {
 
             if ((this.lifeTime) > (i * this.delay)) {
-                this.meshes[i].position.y -= this.delay * 5
+                this.points[i].position.y -= this.delay * 4
             }
 
         }
 
         if (this.lifeTime > this.endOfLife) {
-            for (let i = 0; i < this.meshes.length; i++) {
+            for (let i = 0; i < this.points.length; i++) {
                 if ((this.lifeTime) > (i * this.delay)) {
-                    scene.remove(this.meshes[i])
+                    scene.remove(this.points[i])
                 }
             }
         }

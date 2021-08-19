@@ -5,14 +5,15 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import Particle from './particle'
 
 let cameraProperties = {
-    frustumFar: 270,
-    frustumNear: 1
+    frustumFar: 100,
+    frustumNear: 0.01
 }
 
 let pointProperties = {
     totalPoints: 10000,
-    horizontalSpread: 50,
-    hightStart: 40
+    horizontalSpread: 100,
+    hightStart: 40,
+    particlesPerPoint: 10
 }
 
 
@@ -62,12 +63,11 @@ window.addEventListener('resize', () => {
  * Camera
  */
 // Base camera
-const camera = new THREE.PerspectiveCamera(25, sizes.width / sizes.height, cameraProperties.frustumNear, cameraProperties.frustumFar)
+const camera = new THREE.PerspectiveCamera(35, sizes.width / sizes.height, 0.001, 100000)
 camera.position.x = 0
 camera.position.y = 0
 camera.position.z = 10
 scene.add(camera)
-
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
@@ -86,7 +86,7 @@ const geometry = new THREE.BufferGeometry();
 function makePoint() {
     const x = THREE.MathUtils.randFloatSpread(pointProperties.horizontalSpread);
     const y = pointProperties.hightStart
-    const z = THREE.MathUtils.randFloat(0, -cameraProperties.frustumFar);
+    const z = THREE.MathUtils.randFloat(-50, -cameraProperties.frustumFar);
     return new THREE.Vector3(x, y, z)
 }
 
@@ -122,7 +122,7 @@ gui.add(cameraProperties, 'frustumFar').min(10).max(500).step(10).onChange(() =>
     camera.updateProjectionMatrix();
 })
 
-
+gui.add(pointProperties, 'particlesPerPoint').min(2).max(10).step(1)
 
 
 
@@ -138,7 +138,7 @@ const axesHelper = new THREE.AxesHelper()
  */
 const clock = new THREE.Clock()
 let particles = []
-
+let time = 0
 const tick = () => {
     const elapsedTime = clock.getElapsedTime()
 
@@ -146,23 +146,14 @@ const tick = () => {
     controls.update();
 
     const p = makePoint()
-    const p2 = makePoint()
-    const p3 = makePoint()
-    const particle = new Particle(p)
-    const particle2 = new Particle(p2)
-        // const particle3 = new Particle(p3)
+
+    const particle = new Particle(p, pointProperties.particlesPerPoint)
 
     particles.push(particle)
-    particles.push(particle2)
-        // particles.push(particle3)
-    for (let i = 0; i < particle.meshes.length; i++) {
-        scene.add(particle.meshes[i])
-    }
 
-    for (let i = 0; i < particle2.meshes.length; i++) {
-        scene.add(particle2.meshes[i])
+    for (let j = 0; j < particle.points.length; j++) {
+        scene.add(particle.points[j])
     }
-
 
     for (let i = 0; i < particles.length; i++) {
         particles[i].update(elapsedTime, scene);
@@ -170,23 +161,6 @@ const tick = () => {
             particles.splice(i, 1);
         }
     }
-
-    // const p = makePoint()
-    // vertices.push(p.x, p.y, p.z)
-    // geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-    // points = new THREE.Points(geometry, material);
-    // scene.add(points);
-
-    // for (let i = 0; i < vertices.length; i++) {
-
-
-    // if (i % 3 == 0)
-    // vertices[i + 1] -= 0.05
-
-
-    // }
-
-
 
     // Render
     renderer.render(scene, camera)
